@@ -1,4 +1,8 @@
-._*
+*.sw?
 .DS_Store
+coverage
+rdoc
+pkg
+._*
 *.orig
 Thumbs.db

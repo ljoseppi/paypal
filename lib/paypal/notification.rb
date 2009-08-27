@@ -1,6 +1,9 @@
+require 'rack'
 require 'net/http'
 
 module Paypal
+  class NoDataError < StandardError; end
+  
   # Parser and handler for incoming Instant payment notifications from paypal. 
   # The Example shows a typical handler in a rails application. Note that this
   # is an example, please read the Paypal API documentation for all the details
@@ -49,15 +52,18 @@ module Paypal
     # Example: 
     #   Paypal::Notification.ipn_url = https://www.paypal.com/cgi-bin/webscr
     #
-    cattr_accessor :ipn_url
     @@ipn_url = 'https://www.sandbox.paypal.com/cgi-bin/webscr'
-    
+    def self.ipn_url
+      @@ipn_url
+    end
+    def self.ipn_url=(new_url)
+      @@ipn_url = new_url
+    end
 
     # Overwrite this certificate. It contains the Paypal sandbox certificate by default.
     #
     # Example:
     #   Paypal::Notification.paypal_cert = File::read("paypal_cert.pem")
-    cattr_accessor :paypal_cert
     @@paypal_cert = """
 -----BEGIN CERTIFICATE-----
 MIIDoTCCAwqgAwIBAgIBADANBgkqhkiG9w0BAQUFADCBmDELMAkGA1UEBhMCVVMx
@@ -82,7 +88,13 @@ CGrdKhOrBJRRcpoO3FjHHmXWkqgbQqDWdG7S+/l8n1QfDPp+jpULOrcnGEUY41Im
 jZJTylbJQ1b5PBBjGiP0PpK48cdF
 -----END CERTIFICATE-----
 """
-
+    def self.paypal_cert
+      @@paypal_cert
+    end
+    def self.paypal_cert=(new_cert)
+      @@paypal_cert = new_cert
+    end
+    
     # Creates a new paypal object. Pass the raw html you got from paypal in. 
     # In a rails application this looks something like this
     # 
@@ -91,133 +103,53 @@ jZJTylbJQ1b5PBBjGiP0PpK48cdF
     #     ...
     #   end
     def initialize(post)
-      empty!
+      raise NoDataError if post.to_s.empty?
+
+      @params  = {}
+      @raw     = ""
+
       parse(post)
     end
 
-    # Was the transaction complete?
-    def complete?
-      status == "Completed"
+    # Transaction statuses
+    def canceled_reversal?
+      status == :Canceled_Reversal
+    end
+
+    def completed?
+      status == :Completed
+    end
+
+    def denied?
+      status == :Denied
+    end
+
+    def expired?
+      status == :Expired
     end
 
     def failed?
-      status == "Failed"
-    end
-    
-    def denied?
-      status == "Denied"
+      status == :Failed
     end
 
-    # When was this payment received by the client. 
-    # sometimes it can happen that we get the notification much later. 
-    # One possible scenario is that our web application was down. In this case paypal tries several 
-    # times an hour to inform us about the notification
-    def received_at
-      Time.parse params['payment_date']
+    def pending?
+      status == :Pending
     end
 
-    # Whats the status of this transaction?
-    def status
-      params['payment_status']
+    def processed?
+      status == :Processed
     end
 
-    # Id of this transaction (paypal number)
-    def transaction_id
-      params['txn_id']
+    def refunded?
+      status == :Refunded
     end
 
-    # What type of transaction are we dealing with? 
-    #  "cart" "send_money" "web_accept" are possible here. 
-    def type
-      params['txn_type']
+    def reversed?
+      status == :Reversed
     end
 
-    # the money amount we received in X.2 decimal.
-    def gross
-      params['mc_gross']
-    end
-
-    # the markup paypal charges for the transaction
-    def fee
-      params['mc_fee']
-    end
-
-    # What currency have we been dealing with
-    def currency
-      params['mc_currency']
-    end
-  
-    # This is the item number which we submitted to paypal 
-    def item_id
-      params['item_number']
-    end
-
-    # This is the email address associated to the paypal account that recieved
-    # the payment.
-    def business
-      params['business']
-    end
-
-    # This is the item_name which you passed to paypal
-    def item_name
-      params['item_name']
-    end
-
-    # This is the invocie which you passed to paypal 
-    def invoice
-      params['invoice']
-    end   
-    
-    # This is the invocie which you passed to paypal 
-    def test?
-      params['test_ipn'] == '1'
-    end
-
-    # This is the custom field which you passed to paypal 
-    def custom
-      params['custom']
-    end
-    
-    # Reason for pending status, nil if status is not pending. 
-    def pending_reason
-      params['pending_reason']
-    end
-    
-    # Reason for reversed status, nil if status is not reversed. 
-    def reason_code
-      params['reason_code']
-    end
-    
-    # Memo entered by customer if any
-    def memo
-      params['memo']
-    end
-      
-    # Well, the payment type.
-    def payment_type
-      params['payment_type']
-    end
-    
-    # The exchange rate used if there was a conversion.
-    def exchange_rate
-      params['exchange_rate']
-    end
-    
-    def gross_cents
-      (gross.to_f * 100.0).round
-    end
-
-    # This combines the gross and currency and returns a proper Money object. 
-    # this requires the money library located at http://dist.leetsoft.com/api/money
-    def amount
-      return Money.new(gross_cents, currency) rescue ArgumentError
-      return Money.new(gross_cents) # maybe you have an own money object which doesn't take a currency?
-    end
-    
-    # reset the notification. 
-    def empty!
-      @params  = Hash.new
-      @raw     = ""      
+    def voided?
+      status == :Voided
     end
 
     # Acknowledge the transaction to paypal. This method has to be called after a new 
@@ -234,16 +166,16 @@ jZJTylbJQ1b5PBBjGiP0PpK48cdF
     #     else
     #       ... log possible hacking attempt ...
     #     end
-    def acknowledge      
-      payload =  raw
+    def acknowledge
+      payload = raw
       
       uri = URI.parse(self.class.ipn_url)
       request_path = "#{uri.path}?cmd=_notify-validate"
       
       request = Net::HTTP::Post.new(request_path)
       request['Content-Length'] = "#{payload.size}"
-      request['User-Agent']     = "paypal-ruby -- http://rubyforge.org/projects/paypal/"
-
+      request['User-Agent']     = "paypal ruby -- http://github.com/JonathanTron/paypal"
+      
       http = Net::HTTP.new(uri.host, uri.port)
 
       http.verify_mode    = OpenSSL::SSL::VERIFY_NONE unless @ssl_strict
@@ -258,14 +190,16 @@ jZJTylbJQ1b5PBBjGiP0PpK48cdF
 
     private
     
+    def status
+      @status ||= (params['payment_status'] ? params['payment_status'].to_sym : nil)
+    end
+    
     # Take the posted data and move the relevant data into a hash
     def parse(post)
       @raw = post
-      for line in post.split('&')    
-        key, value = *line.scan( %r{^(\w+)\=(.*)$} ).flatten
-        params[key] = CGI.unescape(value)
-      end
+      self.params = Rack::Utils.parse_query(post)
+      # Rack allows duplicate keys in queries, we need to use only the last value here
+      self.params.each{|k,v| self.params[k] = v.last if v.respond_to?(:last)}
     end
-
   end
 end
