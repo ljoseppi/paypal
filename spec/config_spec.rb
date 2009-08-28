@@ -101,30 +101,40 @@ jZJTylbJQ1b5PBBjGiP0PpK48cdF
       Paypal::Config.ipn_validation_url.should eql("https://www.paypal.com/cgi-bin/webscr?cmd=_notify-validate")
     end
 
-    it "should have paypal cert for production" do
-      Paypal::Config.paypal_cert.should eql(
-"""live_api
------BEGIN CERTIFICATE-----
-MIIDgzCCAuygAwIBAgIBADANBgkqhkiG9w0BAQUFADCBjjELMAkGA1UEBhMCVVMx
-CzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQ
-YXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9h
-cGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb20wHhcNMDQwMjEzMTAxMzE1
-WhcNMzUwMjEzMTAxMzE1WjCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYw
-FAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEG
-A1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0B
-CQEWDXJlQHBheXBhbC5jb20wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAMFH
-Tt38RMxLXJyO2SmS+Ndl72T7oKJ4u4uw+6awntALWh03PewmIJuzbALScsTS4sZo
-S1fKciBGoh11gIfHzylvkdNe/hJl66/RGqrj5rFb08sAABNTzDTiqqNpJeBsYs/c
-2aiGozptX2RlnBktH+SUNpAajW724Nv2Wvhif6sFAgMBAAGjge4wgeswHQYDVR0O
-BBYEFJaffLvGbxe9WT9S1wob7BDWZJRrMIG7BgNVHSMEgbMwgbCAFJaffLvGbxe9
-WT9S1wob7BDWZJRroYGUpIGRMIGOMQswCQYDVQQGEwJVUzELMAkGA1UECBMCQ0Ex
-FjAUBgNVBAcTDU1vdW50YWluIFZpZXcxFDASBgNVBAoTC1BheVBhbCBJbmMuMRMw
-EQYDVQQLFApsaXZlX2NlcnRzMREwDwYDVQQDFAhsaXZlX2FwaTEcMBoGCSqGSIb3
-DQEJARYNcmVAcGF5cGFsLmNvbYIBADAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEB
-BQUAA4GBAIFfOlaagFrl71+jq6OKidbWFSE+Q4FqROvdgIONth+8kSK//Y/4ihuE
-4Ymvzn5ceE3S/iBSQQMjyvb+s2TWbQYDwcp129OPIbD9epdr4tJOUNiSojw7BHwY
-RiPh58S1xGlFgHFXwrEBb3dgNbMUa+u4qectsMAXpVHnD9wIyfmH
------END CERTIFICATE-----""")
+    describe "when paypal_production_cert was not set" do
+      before do
+        @old_cert, Paypal::Config.paypal_production_cert = Paypal::Config.paypal_production_cert, nil
+      end
+      
+      after do
+        Paypal::Config.paypal_production_cert = @old_cert
+      end
+      
+      it "should raise an error" do
+        lambda {
+          Paypal::Config.paypal_cert
+        }.should raise_error(StandardError)
+      end
+    end
+
+    describe "when paypal_production_cert was set" do
+      before do
+        @old_cert, Paypal::Config.paypal_production_cert = Paypal::Config.paypal_production_cert, "TEST"
+      end
+      
+      after do
+        Paypal::Config.paypal_production_cert = @old_cert
+      end
+      
+      it "should not raise an error" do
+        lambda {
+          Paypal::Config.paypal_cert
+        }.should_not raise_error(StandardError)
+      end
+
+      it "should use the paypal production certificate" do
+        Paypal::Config.paypal_cert.should eql("TEST")
+      end
     end
 
     it "should allow setting a new production cert" do

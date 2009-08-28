@@ -31,22 +31,29 @@ module Paypal
       "#{ipn_url}?cmd=_notify-validate"
     end
 
-    @@paypal_cert_sandbox = File.read(File.join(File.dirname(__FILE__), 'certs', 'paypal_sandbox.pem'))
+    @@paypal_sandbox_cert = File.read(File.join(File.dirname(__FILE__), 'certs', 'paypal_sandbox.pem'))
     def self.paypal_sandbox_cert=(new_cert)
-      @@paypal_cert_sandbox = new_cert
+      @@paypal_sandbox_cert = new_cert
+    end
+    def self.paypal_sandbox_cert
+      @@paypal_sandbox_cert
     end
 
-    @@paypal_cert_production = File.read(File.join(File.dirname(__FILE__), 'certs', 'paypal_production.pem'))
+    @@paypal_production_cert = nil
     def self.paypal_production_cert=(new_cert)
-      @@paypal_cert_production = new_cert
+      @@paypal_production_cert = new_cert
+    end
+    def self.paypal_production_cert
+      @@paypal_production_cert
     end
 
     def self.paypal_cert
       case @@mode
       when :sandbox
-        @@paypal_cert_sandbox
+        @@paypal_sandbox_cert
       when :production
-        @@paypal_cert_production
+        raise StandardError.new("You should set Paypal::Config.paypal_production_cert with your paypal production certificate") if @@paypal_production_cert.nil?
+        @@paypal_production_cert
       else
         raise StandardError.new("Please set Paypal::Config.mode to either :sandbox or :production (currently : #{current_mode})")
       end
