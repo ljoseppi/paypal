@@ -1,5 +1,6 @@
 = 3.0.0 (git)
-
+    Introduce a Paypal::Config module to handle ipn/certificates (Jonathan Tron)
+    Allow access to params as method (via method_missing) (Jonathan Tron)
     Rework Paypal::Notification :
       Remove methods to get params informations (CAUTION !!! THIS BREAK OLD API) (Jonathan Tron)
       Add methods for all possible statuses and rename #complete? as completed? to follow Paypal naming (Jonathan Tron)

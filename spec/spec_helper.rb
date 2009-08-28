@@ -6,8 +6,8 @@ require 'spec'
 require 'fakeweb'
 require 'spec/autorun'
 
+# Do not allow connection to non registered URLs, so we can catch if specifics were called
 FakeWeb.allow_net_connect = false
 
 Spec::Runner.configure do |config|
-
 end

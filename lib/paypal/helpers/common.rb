@@ -3,7 +3,7 @@ module Paypal
   # 
   # Example:
   #
-  #    <%= form_tag Paypal::Notification.ipn_url %>
+  #    <%= form_tag Paypal::Config.ipn_url %>
   #    
   #      <%= paypal_setup "Item 500", Money.us_dollar(50000), "bob@bigbusiness.com" %>  
   #      Please press here to pay $500US using paypal. <%= submit_tag %>
@@ -137,7 +137,7 @@ module Paypal
             require 'openssl'
 
             # Convert the key and certificates into OpenSSL-friendly objects.
-            paypal_cert = OpenSSL::X509::Certificate.new(Paypal::Notification.paypal_cert)
+            paypal_cert = OpenSSL::X509::Certificate.new(Paypal::Config.paypal_cert)
             business_key = OpenSSL::PKey::RSA.new(business_key)
             business_cert = OpenSSL::X509::Certificate.new(business_cert)
             # Put the certificate ID back into the parameter hash the way Paypal wants it.

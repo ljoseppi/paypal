@@ -1,6 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Paypal::Notification do
+  before do
+    Paypal::Config.mode = :sandbox
+  end
+  
   def valid_http_raw_data
     "mc_gross=500.00&address_status=confirmed&payer_id=EVMXCLDZJV77Q&tax=0.00&address_street=164+Waverley+Street&payment_date=15%3A23%3A54+Apr+15%2C+2005+PDT&payment_status=Completed&address_zip=K2P0V6&first_name=Tobias&mc_fee=15.05&address_country_code=CA&address_name=Tobias+Luetke&notify_version=1.7&custom=cusdata&payer_status=unverified&business=tobi%40leetsoft.com&address_country=Canada&address_city=Ottawa&quantity=1&payer_email=tobi%40snowdevil.ca&verify_sign=AEt48rmhLYtkZ9VzOGAtwL7rTGxUAoLNsuf7UewmX7UGvcyC3wfUmzJP&txn_id=6G996328CK404320L&payment_type=instant&last_name=Luetke&address_state=Ontario&receiver_email=tobi%40leetsoft.com&payment_fee=&receiver_id=UQ8PDYXJZQD9Y&txn_type=web_accept&item_name=Store+Purchase&mc_currency=CAD&item_number=&test_ipn=1&payment_gross=&shipping=0.00&invoice=myinvoice&pending_reason=mypending_reason&reason_code=myreason_code&memo=mymemo&payment_type=mypayment_type&exchange_rate=myexchange_rate"
   end
@@ -46,6 +50,14 @@ describe Paypal::Notification do
       end
     end
 
+    it "should define method to access each query params" do
+      self.class.valid_parsed_raw_data.each do |key, _|
+        lambda {
+          @notification.send(key.to_sym)
+        }.should_not raise_error
+      end
+    end
+
     ["Canceled_Reversal",
     "Completed",
     "Denied",
@@ -66,7 +78,7 @@ describe Paypal::Notification do
         end
       end
     end
-    
+
     describe "#acknowledge" do
       before do
         @paypal_validation_url = "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_notify-validate"
