@@ -18,8 +18,6 @@ module Paypal
         IPN_URL_SANDBOX
       when :production
         IPN_URL_PRODUCTION
-      else
-        raise StandardError.new("Please set Paypal::Config.mode to either :sandbox or :production (currently : #{current_mode})")
       end
     end
     
@@ -54,8 +52,6 @@ module Paypal
       when :production
         raise StandardError.new("You should set Paypal::Config.paypal_production_cert with your paypal production certificate") if @@paypal_production_cert.nil?
         @@paypal_production_cert
-      else
-        raise StandardError.new("Please set Paypal::Config.mode to either :sandbox or :production (currently : #{current_mode})")
       end
     end
   end
