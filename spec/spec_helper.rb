@@ -1,10 +1,16 @@
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
-require "rubygems"
+begin
+  # Try to require the preresolved locked set of gems.
+  require ::File.expand_path('../.bundle/environment', __FILE__)
+rescue LoadError
+  # Fall back on doing an unlocked resolve at runtime.
+  require "rubygems"
+  require "bundler"
+  Bundler.setup
+end
+
+Bundler.require :default
+
 require "paypal"
-require "rspec"
-require "fakeweb"
-require "nokogiri"
 
 # Do not allow connection to non registered URLs, so we can catch if specifics were called
 FakeWeb.allow_net_connect = false

@@ -12,7 +12,9 @@ begin
     gem.authors = ["Jonathan Tron", "Joseph Halter", "Tobias Luetke"]
     gem.add_dependency "rack", ">= 1.0.0"
     gem.add_development_dependency "rspec", ">= 2.0.0.a"
+    gem.add_development_dependency "rcov", ">= 0.9.8"
     gem.add_development_dependency "nokogiri"
+    gem.add_development_dependency "bluecloth"
     gem.add_development_dependency "yard"
     gem.add_development_dependency "fakeweb"
   end

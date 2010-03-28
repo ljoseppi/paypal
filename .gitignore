@@ -6,3 +6,5 @@ pkg
 ._*
 *.orig
 Thumbs.db
+.yardoc
+.bundle
