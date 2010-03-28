@@ -11,30 +11,22 @@ begin
     gem.homepage = "http://github.com/JonathanTron/paypal"
     gem.authors = ["Jonathan Tron", "Joseph Halter", "Tobias Luetke"]
     gem.add_dependency "rack", ">= 1.0.0"
-    gem.add_development_dependency "rspec"
+    gem.add_development_dependency "rspec", ">= 2.0.0.a"
+    gem.add_development_dependency "nokogiri"
     gem.add_development_dependency "yard"
     gem.add_development_dependency "fakeweb"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
 
-require 'spec/rake/spectask'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
-end
-
-Spec::Rake::SpecTask.new(:rcov) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.pattern = 'spec/**/*_spec.rb'
+require 'rspec/core/rake_task'
+::Rspec::Core::RakeTask.new(:spec)
+::Rspec::Core::RakeTask.new(:rcov) do |spec|
   spec.rcov = true
-  spec.rcov_opts << "--exclude spec/"
+  spec.rcov_opts = "--exclude spec/"
 end
-
 task :spec => :check_dependencies
-
 task :default => :spec
 
 begin

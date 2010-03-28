@@ -1,6 +1,13 @@
-require File.dirname(__FILE__) + '/spec_helper'
+require "spec_helper"
 
 describe Paypal::Config do
+  after do
+    Paypal.class_eval do
+      remove_const :Config if const_defined?(:Config)
+    end
+    load "paypal/config.rb"
+  end
+  
   describe "mode" do
     it "should be :sandbox by default" do
       Paypal::Config.mode.should eql(:sandbox)
@@ -48,7 +55,7 @@ describe Paypal::Config do
     
     it "should have paypal cert for sandbox" do
       Paypal::Config.paypal_cert.should eql(
-"""-----BEGIN CERTIFICATE-----
+"-----BEGIN CERTIFICATE-----
 MIIDoTCCAwqgAwIBAgIBADANBgkqhkiG9w0BAQUFADCBmDELMAkGA1UEBhMCVVMx
 EzARBgNVBAgTCkNhbGlmb3JuaWExETAPBgNVBAcTCFNhbiBKb3NlMRUwEwYDVQQK
 EwxQYXlQYWwsIEluYy4xFjAUBgNVBAsUDXNhbmRib3hfY2VydHMxFDASBgNVBAMU
@@ -69,7 +76,7 @@ bYIBADAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBQUAA4GBAFc288DYGX+GX2+W
 P/dwdXwficf+rlG+0V9GBPJZYKZJQ069W/ZRkUuWFQ+Opd2yhPpneGezmw3aU222
 CGrdKhOrBJRRcpoO3FjHHmXWkqgbQqDWdG7S+/l8n1QfDPp+jpULOrcnGEUY41Im
 jZJTylbJQ1b5PBBjGiP0PpK48cdF
------END CERTIFICATE-----""")
+-----END CERTIFICATE-----")
     end
     
     it "should allow setting a new sandbox cert" do

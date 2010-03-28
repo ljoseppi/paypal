@@ -1,4 +1,8 @@
 = 3.0.0 (git)
+
+    Start spec on Paypal::Helpers::Common.paypal_setup
+    Fix specs for Paypal::Config
+    Upgrade dev dependencies to use Rspec >= 2.0.0.a
     Introduce a Paypal::Config module to handle ipn/certificates (Jonathan Tron)
     Allow access to params as method (via method_missing) (Jonathan Tron)
     Rework Paypal::Notification :
