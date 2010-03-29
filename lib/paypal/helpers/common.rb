@@ -1,31 +1,31 @@
-module Paypal 
-  # This is a collection of helpers which aid in the creation of paypal buttons 
-  # 
+module Paypal
+  # This is a collection of helpers which aid in the creation of paypal buttons
+  #
   # Example:
   #
   #    <%= form_tag Paypal::Config.ipn_url %>
-  #    
-  #      <%= paypal_setup "Item 500", Money.us_dollar(50000), "bob@bigbusiness.com" %>  
+  #
+  #      <%= paypal_setup "Item 500", Money.us_dollar(50000), "bob@bigbusiness.com" %>
   #      Please press here to pay $500US using paypal. <%= submit_tag %>
-  #    
-  #    <% end_form_tag %> 
+  #
+  #    <% end_form_tag %>
   #
   # For this to work you have to include these methods as helpers in your rails application.
   # One way is to add "include Paypal::Helpers" in your application_helper.rb
   # See Paypal::Notification for information on how to catch payment events.
   module Helpers
     module Common
-      # This helper creates the hidden form data which is needed for a paypal purchase. 
-      # 
-      # * <tt>item_number</tt> -- The first parameter is the item number. This is for your personal organization and can 
-      #   be arbitrary. Paypal will sent the item number back with the IPN so its a great place to 
-      #   store a user ID or a order ID or something like  this. 
+      # This helper creates the hidden form data which is needed for a paypal purchase.
       #
-      # * <tt>amount</tt> -- should be a parameter of type Money ( see http://leetsoft.com/api/money ) but can also 
-      #   be a string of type "50.00" for 50$. If you use the string syntax make sure you set the current 
+      # * <tt>item_number</tt> -- The first parameter is the item number. This is for your personal organization and can
+      #   be arbitrary. Paypal will sent the item number back with the IPN so its a great place to
+      #   store a user ID or a order ID or something like  this.
+      #
+      # * <tt>amount</tt> -- should be a parameter of type Money ( see http://leetsoft.com/api/money ) but can also
+      #   be a string of type "50.00" for 50$. If you use the string syntax make sure you set the current
       #   currency as part of the options hash. The default is USD
       #
-      # * <tt>business</tt> -- This is your paypal account name ( a email ). This needs to be a valid paypal business account.
+      # * <tt>business</tt> -- This is your paypal account name ( an email ). This needs to be a valid paypal business account.
       #
       # The last parameter is a options hash. You can set or override any Paypal-recognized parameter, including:
       #
@@ -33,16 +33,16 @@ module Paypal
       # * <tt>:quantity</tt> -- default is '1'.
       # * <tt>:no_note</tt> -- default is '1'.
       # * <tt>:item_name</tt> -- default is 'Store purchase'. This is the name of the purchase which will be displayed
-      #   on the paypal page. 
+      #   on the paypal page.
       # * <tt>:no_shipping</tt> -- default is '1'. By default we tell paypal that no shipping is required. Usually
-      #   the shipping address should be collected in our application, not by paypal. 
+      #   the shipping address should be collected in our application, not by paypal.
       # * <tt>:currency</tt> -- default is 'USD'. If you provide a Money object, that will automatically override
       #   the value.
       # * <tt>:charset</tt> -- default is 'utf-8'.
-      # * <tt>:notify_url</tt> -- If provided paypal will send its IPN notification once a 
+      # * <tt>:notify_url</tt> -- If provided paypal will send its IPN notification once a
       #   purchase is made, canceled or any other status changes occur.
-      # * <tt>:return</tt> -- If provided paypal will redirect a user back to this url after a 
-      #   successful purchase. Useful for a kind of thankyou page. 
+      # * <tt>:return</tt> -- If provided paypal will redirect a user back to this url after a
+      #   successful purchase. Useful for a kind of thankyou page.
       # * <tt>:cancel_return</tt> -- If provided paypal will redirect a user back to this url when
       #   the user cancels the purchase.
       # * <tt>:tax</tt> -- the tax for the store purchase. Same format as the amount parameter but optional
@@ -67,21 +67,21 @@ module Paypal
       # * <tt>:business_key</tt> -- The private key you have generated
       # * <tt>:business_cert</tt> -- The public certificate you have also uploaded to Paypal
       # * <tt>:business_certid</tt> -- The certificate ID that Paypal has assigned to your certificate.
-      # 
+      #
       # Examples:
-      #   
-      #   <%= paypal_setup @order.id, Money.us_dollar(50000), "bob@bigbusiness.com" %>  
-      #   <%= paypal_setup @order.id, '50.00', "bob@bigbusiness.com", :currency => 'USD' %>  
-      #   <%= paypal_setup @order.id, '50.00', "bob@bigbusiness.com", :currency => 'USD', :notify_url => url_for(:only_path => false, :action => 'paypal_ipn') %>  
-      #   <%= paypal_setup @order.id, Money.ca_dollar(50000), "bob@bigbusiness.com", :item_name => 'Snowdevil shop purchase', :return_url => paypal_return_url, :cancel_url => paypal_cancel_url, :notify_url => paypal_ipn_url  %>  
-      #   <%= paypal_setup @order.id, Money.ca_dollar(50000), "bob@bigbusiness.com", :item_name => 'Snowdevil shop purchase', :return_url => paypal_return_url, :cancel_url => paypal_cancel_url, :business_key => @business_key, :business_cert => @business_cert, :business_certid => @business_certid  %>  
-      # 
+      #
+      #   <%= paypal_setup @order.id, Money.us_dollar(50000), "bob@bigbusiness.com" %>
+      #   <%= paypal_setup @order.id, '50.00', "bob@bigbusiness.com", :currency => 'USD' %>
+      #   <%= paypal_setup @order.id, '50.00', "bob@bigbusiness.com", :currency => 'USD', :notify_url => url_for(:only_path => false, :action => 'paypal_ipn') %>
+      #   <%= paypal_setup @order.id, Money.ca_dollar(50000), "bob@bigbusiness.com", :item_name => 'Snowdevil shop purchase', :return_url => paypal_return_url, :cancel_url => paypal_cancel_url, :notify_url => paypal_ipn_url  %>
+      #   <%= paypal_setup @order.id, Money.ca_dollar(50000), "bob@bigbusiness.com", :item_name => 'Snowdevil shop purchase', :return_url => paypal_return_url, :cancel_url => paypal_cancel_url, :business_key => @business_key, :business_cert => @business_cert, :business_certid => @business_certid  %>
+      #
       def paypal_setup(item_number, amount, business, options = {})
 
         subscription = options.delete(:subscription)
 
         misses = (options.keys - valid_setup_options)
-        raise ArgumentError, "Unknown option #{misses.inspect}" if not misses.empty?
+        raise ArgumentError, "Unknown option #{misses.inspect}" unless misses.empty?
 
         params = {
           :cmd => subscription ? '_ext-enter' : '_xclick',
@@ -99,7 +99,7 @@ module Paypal
         params[:currency_code] = params.delete(:currency) if params[:currency]
         params[:currency_code] ||= 'USD'
 
-        # We accept both strings and money objects as amount    
+        # We accept both strings and money objects as amount
         amount = amount.cents.to_f / 100.0 if amount.respond_to?(:cents)
         amount = sprintf('%.2f', amount)
 
@@ -130,64 +130,63 @@ module Paypal
         business_cert = params.delete(:business_cert)
         business_certid = params.delete(:business_certid)
 
-        # Build the form 
-        returning button = [] do
-          # Only attempt an encrypted form if we have all the required fields.
-          if business_key and business_cert and business_certid
-            require 'openssl'
+        # Build the form
+        buttons = []
+        # Only attempt an encrypted form if we have all the required fields.
+        if business_key and business_cert and business_certid
+          require 'openssl'
 
-            # Convert the key and certificates into OpenSSL-friendly objects.
-            paypal_cert = OpenSSL::X509::Certificate.new(Paypal::Config.paypal_cert)
-            business_key = OpenSSL::PKey::RSA.new(business_key)
-            business_cert = OpenSSL::X509::Certificate.new(business_cert)
-            # Put the certificate ID back into the parameter hash the way Paypal wants it.
-            params[:cert_id] = business_certid
+          # Convert the key and certificates into OpenSSL-friendly objects.
+          paypal_cert = OpenSSL::X509::Certificate.new(Paypal::Config.paypal_cert)
+          business_key = OpenSSL::PKey::RSA.new(business_key)
+          business_cert = OpenSSL::X509::Certificate.new(business_cert)
+          # Put the certificate ID back into the parameter hash the way Paypal wants it.
+          params[:cert_id] = business_certid
 
-            # Prepare a string of data for encryption
-            data = ""
-            params.each_pair {|k,v| data << "#{k}=#{v}\n"}
+          # Prepare a string of data for encryption
+          data = ""
+          params.each_pair {|k,v| data << "#{k}=#{v}\n"}
 
-            # Sign the data with our key/certificate pair
-            signed = OpenSSL::PKCS7::sign(business_cert, business_key, data, [], OpenSSL::PKCS7::BINARY)
-            # Encrypt the signed data with Paypal's public certificate.
-            encrypted = OpenSSL::PKCS7::encrypt([paypal_cert], signed.to_der, OpenSSL::Cipher::Cipher::new("DES3"), OpenSSL::PKCS7::BINARY)
+          # Sign the data with our key/certificate pair
+          signed = OpenSSL::PKCS7::sign(business_cert, business_key, data, [], OpenSSL::PKCS7::BINARY)
+          # Encrypt the signed data with Paypal's public certificate.
+          encrypted = OpenSSL::PKCS7::encrypt([paypal_cert], signed.to_der, OpenSSL::Cipher::Cipher::new("DES3"), OpenSSL::PKCS7::BINARY)
 
-            # The command for encrypted forms is always '_s-xclick'; the real command is in the encrypted data.
-            button << tag(:input, :type => 'hidden', :name => 'cmd', :value => "_s-xclick")
-            button << tag(:input, :type => 'hidden', :name => 'encrypted', :value => encrypted)
-          else
-            # Just emit all the parameters that we have as hidden fields.
-            # Note that the sorting isn't really needed, but it makes testing a lot easier for now.
-            params.each do |key, value|
-              button << tag(:input, :type => 'hidden', :name => key, :value => value) unless value.nil?
-            end
+          # The command for encrypted forms is always '_s-xclick'; the real command is in the encrypted data.
+          buttons << %Q{<input type="hidden" name="cmd" value="_s-xclick" />}
+          buttons << %Q{<input type="hidden" name="cmd" value="#{encrypted}" />}
+        else
+          # Just emit all the parameters that we have as hidden fields.
+          # Note that the sorting isn't really needed, but it makes testing a lot easier for now.
+          params.each do |key, value|
+            buttons << %Q{<input type="hidden" name="#{key}" value="#{value}" />} unless value.nil?
           end
-        end.join("\n")
+        end
+        buttons.join("\n")
       end
-    
-    
-      # Pass an address to paypal so that all singup forms can be prefilled
+
+      # Pass an address to paypal so that all signup forms can be prefilled
       #
-      # * <tt>email</tt> --	Customer's email address
-      # * <tt>first_name</tt> --	Customer's first name. Must be alpha-numeric, with a 32 character limit
-      # * <tt>last_name</tt> --	Customer's last name. Must be alpha-numeric, with a 64 character limit
-      # * <tt>address1</tt> --	First line of customer's address. Must be alpha-numeric, with a 100 character limit
-      # * <tt>address2</tt> --	Second line of customer's address. Must be alpha-numeric, with a 100 character limit
-      # * <tt>city</tt> --	City of customer's address. Must be alpha-numeric, with a 100 character limit
-      # * <tt>state</tt> --	State of customer's address. Must be official 2 letter abbreviation
-      # * <tt>zip</tt> --	Zip code of customer's address
-      # * <tt>night_phone_a</tt> --	Area code of customer's night telephone number
-      # * <tt>night_phone_b</tt> --	First three digits of customer's night telephone number
-      # * <tt>day_phone_a</tt> --	Area code of customer's daytime telephone number
-      # * <tt>day_phone_b</tt> --	First three digits of customer's daytime telephon
+      # * <tt>email</tt> -- Customer's email address
+      # * <tt>first_name</tt> --  Customer's first name. Must be alpha-numeric, with a 32 character limit
+      # * <tt>last_name</tt> -- Customer's last name. Must be alpha-numeric, with a 64 character limit
+      # * <tt>address1</tt> --  First line of customer's address. Must be alpha-numeric, with a 100 character limit
+      # * <tt>address2</tt> --  Second line of customer's address. Must be alpha-numeric, with a 100 character limit
+      # * <tt>city</tt> --  City of customer's address. Must be alpha-numeric, with a 100 character limit
+      # * <tt>state</tt> -- State of customer's address. Must be official 2 letter abbreviation
+      # * <tt>zip</tt> -- Zip code of customer's address
+      # * <tt>night_phone_a</tt> -- Area code of customer's night telephone number
+      # * <tt>night_phone_b</tt> -- First three digits of customer's night telephone number
+      # * <tt>day_phone_a</tt> -- Area code of customer's daytime telephone number
+      # * <tt>day_phone_b</tt> -- First three digits of customer's daytime telephon
       def paypal_address(options = {})
         options.collect do |key, value|
-          tag(:input, :type => 'hidden', :name => key, :value => value)
+          %Q{<input type="hidden" name="#{key}" value="#{value}" />}
         end.join("\n")
       end
-    
-      private
-    
+
+    private
+
       # See https://www.paypal.com/IntegrationCenter/ic_std-variable-reference.html for details on the following options.
       def valid_setup_options
         [

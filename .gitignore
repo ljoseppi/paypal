@@ -7,3 +7,5 @@ pkg
 *.orig
 Thumbs.db
 doc
+.yardoc
+.bundle
