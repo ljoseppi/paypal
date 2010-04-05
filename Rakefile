@@ -1,10 +1,14 @@
-require 'rubygems'
-require 'rake'
+require "rubygems"
+require "rake"
+
+$:.unshift "lib"
+require "paypal"
 
 begin
-  require 'jeweler'
+  require "jeweler"
   Jeweler::Tasks.new do |gem|
     gem.name = "paypal"
+    gem.version = Paypal::VERSION
     gem.summary = %Q{Paypal Express Integration}
     gem.description = %Q{Integrate Paypal Express}
     gem.email = "jonathan@tron.name"
@@ -22,7 +26,7 @@ rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
 
-require 'rspec/core/rake_task'
+require "rspec/core/rake_task"
 ::Rspec::Core::RakeTask.new(:spec)
 ::Rspec::Core::RakeTask.new(:rcov) do |spec|
   spec.rcov = true
@@ -32,7 +36,7 @@ task :spec => :check_dependencies
 task :default => :spec
 
 begin
-  require 'yard'
+  require "yard"
   YARD::Rake::YardocTask.new
 rescue LoadError
   task :yardoc do

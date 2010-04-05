@@ -45,7 +45,7 @@ describe Paypal::Helpers::Common do
       end
     end
 
-    describe "with unknown optios" do
+    describe "with unknown options" do
       it "should raise an error" do
         lambda do
           paypal_setup(1, "10.00", "trash@openhood.com", :unknown_option => "unknown")
