@@ -7,7 +7,7 @@ require "paypal"
 begin
   require "jeweler"
   Jeweler::Tasks.new do |gem|
-    gem.name = "paypal"
+    gem.name = "jonathantron-paypal"
     gem.version = Paypal::VERSION
     gem.summary = %Q{Paypal Express Integration}
     gem.description = %Q{Integrate Paypal Express}
