@@ -42,6 +42,7 @@ describe Paypal::Helpers::Common do
       end
       it "should include cmd with encrypted datas" do
         @result.should have_css("input[type=hidden][name=encrypted][value*=PKCS7]")
+        @result.should_not have_css("input[type=hidden][name=encrypted][value*='\n']")
       end
     end
 
