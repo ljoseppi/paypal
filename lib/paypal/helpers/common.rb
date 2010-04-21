@@ -154,7 +154,7 @@ module Paypal
 
           # The command for encrypted forms is always '_s-xclick'; the real command is in the encrypted data.
           buttons << %Q{<input type="hidden" name="cmd" value="_s-xclick" />}
-          buttons << %Q{<input type="hidden" name="cmd" value="#{encrypted}" />}
+          buttons << %Q{<input type="hidden" name="encrypted" value="#{encrypted}" />}
         else
           # Just emit all the parameters that we have as hidden fields.
           # Note that the sorting isn't really needed, but it makes testing a lot easier for now.
