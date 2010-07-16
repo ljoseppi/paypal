@@ -1,5 +1,6 @@
 source :gemcutter
 
+gem "bundler"
 gem "rack", ">= 1.0.0"
 gem "json_pure"
 gem "rake"

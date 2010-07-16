@@ -1,5 +1,7 @@
 = 3.0.0 (git)
 
+    Update spec task to use the new RSpec module name
+    Remove constant/class variable usage and use Thread specific configurations
     Start spec on Paypal::Helpers::Common.paypal_setup
     Fix specs for Paypal::Config
     Upgrade dev dependencies to use Rspec >= 2.0.0.a

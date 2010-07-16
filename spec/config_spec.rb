@@ -2,12 +2,29 @@ require "spec_helper"
 
 describe Paypal::Config do
   after do
+    Thread.current.keys.each do |key|
+      Thread.current[key] = nil unless key =~ /^__.+__$/
+    end
     Paypal.class_eval do
       remove_const :Config if const_defined?(:Config)
     end
     load "paypal/config.rb"
   end
   
+  describe "ipn_urls" do
+    it "should define url for :production" do
+      Paypal::Config.ipn_urls[:production].should eql("https://www.paypal.com/cgi-bin/webscr")
+    end
+    it "should define url for :sandbox" do
+      Paypal::Config.ipn_urls[:sandbox].should eql("https://www.sandbox.paypal.com/cgi-bin/webscr")
+    end
+    it "should allow changing urls" do
+      url = "https://myownsandbox.com"
+      Paypal::Config.ipn_urls[:sandbox] = url
+      Paypal::Config.ipn_urls[:sandbox].should eql(url)
+    end
+  end
+
   describe "mode" do
     it "should be :sandbox by default" do
       Paypal::Config.mode.should eql(:sandbox)
@@ -149,6 +166,17 @@ jZJTylbJQ1b5PBBjGiP0PpK48cdF
         Paypal::Config.paypal_production_cert = "TEST"
       }.should_not raise_error
       Paypal::Config.paypal_cert.should eql("TEST")
+    end
+  end
+  
+  describe "in multithreaded environment" do
+    it "should not mix different thread values" do
+      t = Thread.new { 
+        Paypal::Config.mode = :production
+        Paypal::Config.mode.should eql(:production)
+      }
+      t.join
+      Paypal::Config.mode.should eql(:sandbox)
     end
   end
 end
