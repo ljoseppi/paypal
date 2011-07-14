@@ -1,10 +1,12 @@
 module Paypal
   module Config
 
-    @@paypal_config = {}
+    class << self
+      attr_accessor :ipn_urls, :mode, :paypal_sandbox_cert, :paypal_production_cert, :business_cert, :business_key, :business_cert_id
+    end
 
     def self.ipn_urls
-      @@paypal_config[:ipn_urls] ||= {
+      @@ipn_urls ||= {
         :sandbox => "https://www.sandbox.paypal.com/cgi-bin/webscr",
         :production => "https://www.paypal.com/cgi-bin/webscr"
       }
@@ -12,10 +14,10 @@ module Paypal
 
     def self.mode=(new_mode)
       raise ArgumentError.new("Paypal::Config.mode should be either :sandbox or :production (you tried to set it as : #{new_mode})") unless [:sandbox, :production].include?(new_mode.to_sym)
-      @@paypal_config[:mode] = new_mode.to_sym
+      @@mode = new_mode.to_sym
     end
     def self.mode
-      @@paypal_config[:mode] ||= :sandbox
+      @@mode ||= :sandbox
     end
     
     def self.ipn_url
@@ -30,18 +32,8 @@ module Paypal
       "#{ipn_url}?cmd=_notify-validate"
     end
 
-    def self.paypal_sandbox_cert=(new_cert)
-      @@paypal_config[:paypal_sandbox_cert] = new_cert
-    end
     def self.paypal_sandbox_cert
-      @@paypal_config[:paypal_sandbox_cert] ||= File.read(File.join(File.dirname(__FILE__), 'certs', 'paypal_sandbox.pem'))
-    end
-
-    def self.paypal_production_cert=(new_cert)
-      @@paypal_config[:paypal_production_cert] = new_cert
-    end
-    def self.paypal_production_cert
-      @@paypal_config[:paypal_production_cert]
+      @@paypal_sandbox_cert ||= File.read(File.join(File.dirname(__FILE__), 'certs', 'paypal_sandbox.pem'))
     end
 
     def self.paypal_cert

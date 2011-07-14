@@ -92,7 +92,8 @@ module Paypal
           :item_name => 'Store purchase',
           :no_shipping => '1',
           :no_note => '1',
-          :charset => 'utf-8'
+          :charset => 'utf-8',
+          :page_style => 'PayPal'
         }.reject{|k,v| v.nil?}.merge(options)
 
         params[:currency_code] = amount.currency if amount.respond_to?(:currency)
@@ -126,9 +127,11 @@ module Paypal
         end
 
         # look for encryption parameters, save them outsite the parameter hash.
-        business_key = params.delete(:business_key)
-        business_cert = params.delete(:business_cert)
-        business_certid = params.delete(:business_certid)
+        if params[:enable_encryption] == true
+          business_key = Paypal::Config.business_key
+          business_cert = Paypal::Config.business_cert
+          business_certid = Paypal::Config.business_cert_id
+        end
 
         # Build the form
         buttons = []
