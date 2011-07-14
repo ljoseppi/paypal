@@ -291,9 +291,7 @@ module Paypal
         :usr_manage, # Username and Password Generator? (1=yes, default=0)
         :modify, # Modification Behaviour (0=new subs only, 1=new or modify, 2=modify existing only, default=0)
         # Encryption Options - used internally only.
-        :business_key, # Your private key
-        :business_cert, # Your public certificate
-        :business_certid, # Your public certificate ID (from Paypal)
+        :enable_encryption, # Use business_cert, business_key and business_cert_id from Paypal::Config
         # Other
         :bn
         ]
