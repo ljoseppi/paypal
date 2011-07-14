@@ -1,7 +1,7 @@
 module Paypal
   module Config
 
-    module << self
+    class << self
       attr_accessor :ipn_urls, :mode, :paypal_sandbox_cert, :paypal_production_cert, :business_cert, :business_key, :business_cert_id
 
       def ipn_urls
