@@ -2,9 +2,6 @@ require "spec_helper"
 
 describe Paypal::Config do
   after do
-    Thread.current.keys.each do |key|
-      Thread.current[key] = nil unless key =~ /^__.+__$/
-    end
     Paypal.class_eval do
       remove_const :Config if const_defined?(:Config)
     end
@@ -166,17 +163,6 @@ jZJTylbJQ1b5PBBjGiP0PpK48cdF
         Paypal::Config.paypal_production_cert = "TEST"
       }.should_not raise_error
       Paypal::Config.paypal_cert.should eql("TEST")
-    end
-  end
-  
-  describe "in multithreaded environment" do
-    it "should not mix different thread values" do
-      t = Thread.new { 
-        Paypal::Config.mode = :production
-        Paypal::Config.mode.should eql(:production)
-      }
-      t.join
-      Paypal::Config.mode.should eql(:sandbox)
     end
   end
 end

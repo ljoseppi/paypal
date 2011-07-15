@@ -1,21 +1,16 @@
-begin
-  # Try to require the preresolved locked set of gems.
-  require ::File.expand_path('../.bundle/environment', __FILE__)
-rescue LoadError
-  # Fall back on doing an unlocked resolve at runtime.
-  require "rubygems"
-  require "bundler"
-  Bundler.setup
-end
-
-Bundler.require :default
+require "rubygems"
+require "bundler"
+Bundler.setup
 
 require "paypal"
+require "fakeweb"
+require "nokogiri"
+require "rspec"
 
 # Do not allow connection to non registered URLs, so we can catch if specifics were called
 FakeWeb.allow_net_connect = false
 
-Rspec::Matchers.define :have_css do |css|
+RSpec::Matchers.define :have_css do |css|
   match do |text|
     html = Nokogiri::HTML(text)
     !html.css(css).empty?
@@ -34,7 +29,7 @@ Rspec::Matchers.define :have_css do |css|
   end
 end
 
-Rspec.configure do |c|
+RSpec.configure do |c|
   c.mock_framework = :rspec
   c.color_enabled = true
 end

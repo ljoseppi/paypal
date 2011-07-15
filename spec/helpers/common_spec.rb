@@ -28,21 +28,32 @@ describe Paypal::Helpers::Common do
       end
     end
 
-    describe "with :business_key, :business_cert and :business_certid params filled" do
-      before do
-        @result = paypal_setup(1, "10.00", "trash@openhood.com", {
-         :business_key => File.read(File.join(File.dirname(__FILE__), "../fixtures/business_key.pem")),
-         :business_cert => File.read(File.join(File.dirname(__FILE__), "../fixtures/business_cert.pem")),
-         :business_certid => "CERTID"
-        })
+    describe "with :enable_encryption set to true" do
+      context "with Paypal::Config.business_cert business_key and business_cert_id not set" do
+        it "should raise an error" do
+          lambda {
+            paypal_setup(1, "10.00", "trash@openhood.com", {:enable_encryption => true})
+          }.should raise_error ArgumentError, "Paypal::Config.business_key, Paypal::Config.business_cert and Paypal::Config.business_cert_id should be set if you use :enable_encryption"
+        end
       end
 
-      it "should include cmd with _s-xclick" do
-        @result.should have_css("input[type=hidden][name=cmd][value=_s-xclick]")
-      end
-      it "should include cmd with encrypted datas" do
-        @result.should have_css("input[type=hidden][name=encrypted][value*=PKCS7]")
-        @result.should_not have_css("input[type=hidden][name=encrypted][value*='\n']")
+      context "with Paypal::Config.business_cert business_key and business_cert_id set" do
+        before do
+          Paypal::Config.business_cert = File.read(File.expand_path("../../fixtures/business_cert.pem", __FILE__))
+          Paypal::Config.business_key = File.read(File.expand_path("../../fixtures/business_key.pem", __FILE__))
+          Paypal::Config.business_cert_id = "CERTID"
+          @result = paypal_setup(1, "10.00", "trash@openhood.com", {
+            :enable_encryption => true
+          })
+        end
+
+        it "should include cmd with _s-xclick" do
+          @result.should have_css("input[type=hidden][name=cmd][value=_s-xclick]")
+        end
+        it "should include cmd with encrypted datas" do
+          @result.should have_css("input[type=hidden][name=encrypted][value*=PKCS7]")
+          @result.should_not have_css("input[type=hidden][name=encrypted][value*='\n']")
+        end
       end
     end
 

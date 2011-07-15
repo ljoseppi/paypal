@@ -1,89 +1,36 @@
---- 
-dependencies: 
-  fakeweb: 
-    group: 
-    - :default
-    version: ">= 0"
-    require: 
-    - fakeweb
-  bluecloth: 
-    group: 
-    - :default
-    version: ">= 0"
-  rake: 
-    group: 
-    - :default
-    version: ">= 0"
-  rspec: 
-    group: 
-    - :default
-    version: ">= 2.0.0.a"
-  yard: 
-    group: 
-    - :default
-    version: ">= 0"
-  rack: 
-    group: 
-    - :default
-    version: ">= 1.0.0"
-  rcov: 
-    group: 
-    - :default
-    version: ">= 0.9.8"
-  jeweler: 
-    group: 
-    - :default
-    version: ">= 0"
-  bundler: 
-    group: 
-    - :default
-    version: ">= 0"
-  json_pure: 
-    group: 
-    - :default
-    version: ">= 0"
-  nokogiri: 
-    group: 
-    - :default
-    version: ">= 0"
-specs: 
-- rake: 
-    version: 0.8.7
-- bluecloth: 
-    version: 2.0.7
-- bundler: 
-    version: 0.9.25
-- diff-lcs: 
-    version: 1.1.2
-- fakeweb: 
-    version: 1.2.8
-- json_pure: 
-    version: 1.4.3
-- gemcutter: 
-    version: 0.5.0
-- git: 
-    version: 1.2.5
-- rubyforge: 
-    version: 2.0.4
-- jeweler: 
-    version: 1.4.0
-- nokogiri: 
-    version: 1.4.2
-- rack: 
-    version: 1.2.1
-- rcov: 
-    version: 0.9.8
-- rspec-core: 
-    version: 2.0.0.beta.17
-- rspec-expectations: 
-    version: 2.0.0.beta.17
-- rspec-mocks: 
-    version: 2.0.0.beta.17
-- rspec: 
-    version: 2.0.0.beta.17
-- yard: 
-    version: 0.5.8
-hash: f248241b76b1508705a1057a180c95c99716930f
-sources: 
-- Rubygems: 
-    uri: http://gemcutter.org
+PATH
+  remote: .
+  specs:
+    jonathantron-paypal (3.0.0pre4)
+      rack (>= 1.0.0)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    bluecloth (2.1.0)
+    diff-lcs (1.1.2)
+    fakeweb (1.3.0)
+    nokogiri (1.5.0)
+    rack (1.3.1)
+    rcov (0.9.9)
+    rspec (2.6.0)
+      rspec-core (~> 2.6.0)
+      rspec-expectations (~> 2.6.0)
+      rspec-mocks (~> 2.6.0)
+    rspec-core (2.6.4)
+    rspec-expectations (2.6.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.6.0)
+    yard (0.7.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bluecloth
+  fakeweb
+  jonathantron-paypal!
+  nokogiri
+  rcov (>= 0.9.8)
+  rspec (~> 2.6.0)
+  yard

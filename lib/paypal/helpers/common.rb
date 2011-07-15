@@ -127,10 +127,13 @@ module Paypal
         end
 
         # look for encryption parameters, save them outsite the parameter hash.
-        if params[:enable_encryption] == true
+        if params.delete(:enable_encryption)
           business_key = Paypal::Config.business_key
           business_cert = Paypal::Config.business_cert
           business_certid = Paypal::Config.business_cert_id
+          unless business_key && business_cert && business_certid
+            raise ArgumentError, "Paypal::Config.business_key, Paypal::Config.business_cert and Paypal::Config.business_cert_id should be set if you use :enable_encryption"
+          end
         end
 
         # Build the form
