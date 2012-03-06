@@ -3,12 +3,12 @@ $:.push File.expand_path("../lib", __FILE__)
 require "paypal/version"
 
 Gem::Specification.new do |s|
-  s.name        = "jonathantron-paypal"
+  s.name        = "ljoseppi-paypal"
   s.version     = Paypal::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Jonathan TRON", "Joseph HALTER", "Tobias LUETKE"]
-  s.email       = "jonathan@tron.name"
-  s.homepage    = "https://github.com/JonathanTron/paypal"
+  s.authors     = ["Lairton Borges","Jonathan TRON", "Joseph HALTER", "Tobias LUETKE"]
+  s.email       = "ljoseppi@gmail.com"
+  s.homepage    = "https://github.com/ljoseppi/paypal"
   s.summary     = %q{Integrate Paypal Express}
   s.description = %q{Paypal Express Integration}
 
