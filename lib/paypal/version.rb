@@ -1,3 +1,3 @@
 module Paypal
-  VERSION = "3.0.0pre7"
+  VERSION = "3.0.1"
 end
