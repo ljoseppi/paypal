@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "paypal/version"
 
 Gem::Specification.new do |s|
-  s.name        = "ljoseppi-paypal"
+  s.name        = "paypal-brazil"
   s.version     = Paypal::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Lairton Borges","Jonathan TRON", "Joseph HALTER", "Tobias LUETKE"]
