@@ -6,8 +6,8 @@ module Paypal
 
       def ipn_urls
         @ipn_urls ||= {
-          :sandbox => "https://www.sandbox.paypal.com/cgi-bin/webscr",
-          :production => "https://www.paypal.com/cgi-bin/webscr"
+          :sandbox => "https://www.sandbox.paypal.com/br/cgi-bin/webscr",
+          :production => "https://www.paypal.com/br/cgi-bin/webscr"
         }
       end
 
